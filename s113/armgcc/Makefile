@@ -326,7 +326,7 @@ $(OUTPUT_DIRECTORY)/nrf52840_xxaa.dfu: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex
 						 --sd-req 0x0,0x102 \
 						 --sd-id 0x102 \
 						 --application $< \
-						 --softdevice $(SDK_ROOT)/components/softdevice/s113/hex/s113_nrf52_7.2.0_softdevice.hex $@
+						 $@
 
 dfu: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.dfu
 	@echo Performing DFU with generated package
