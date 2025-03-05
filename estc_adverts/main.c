@@ -100,18 +100,41 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+#define COMPANY_ID                      0x1231
+#define SHORT_NAME_LEN                  3
 
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
 
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
+static const char m_name[] = "Andrew";
+static const char m_full_name[] = "Andrew Prokopenko";
 
 static ble_uuid_t m_adv_uuids[] =                                               /**< Universally unique service identifiers. */
 {
     {BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}
 };
 
+static ble_advdata_manuf_data_t m_short = 
+{
+    .company_identifier = COMPANY_ID,
+    .data = 
+    {
+        .size = sizeof(m_name),
+        .p_data = (uint8_t *)m_name
+    }
+};
+
+static ble_advdata_manuf_data_t m_full = 
+{
+    .company_identifier = COMPANY_ID,
+    .data = 
+    {
+        .size = sizeof(m_full_name),
+        .p_data = (uint8_t *)m_full_name
+    }
+};
 
 static void advertising_start(void);
 
@@ -419,12 +442,14 @@ static void bsp_event_handler(bsp_event_t event)
  */
 static void advertising_init(void)
 {
+    UNUSED_VARIABLE(m_full);
     ret_code_t             err_code;
     ble_advertising_init_t init;
 
     memset(&init, 0, sizeof(init));
 
-    init.advdata.name_type               = BLE_ADVDATA_FULL_NAME;
+    init.advdata.name_type               = BLE_ADVDATA_SHORT_NAME;
+    init.advdata.short_name_len          = 3;
     init.advdata.include_appearance      = true;
     init.advdata.flags                   = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
     init.advdata.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
@@ -433,9 +458,13 @@ static void advertising_init(void)
     init.config.ble_adv_fast_enabled  = true;
     init.config.ble_adv_fast_interval = APP_ADV_INTERVAL;
     init.config.ble_adv_fast_timeout  = APP_ADV_DURATION;
+    
+    // data to the advertisement data
+    init.advdata.p_manuf_specific_data  = &m_short;
 
-    // TODO: Add more data to the advertisement data
-    // TODO: Add more data to the scan response data
+    // data to the scan response data
+    init.srdata.name_type               = BLE_ADVDATA_FULL_NAME;
+    init.srdata.p_manuf_specific_data   = &m_full;
 
     init.evt_handler = on_adv_evt;
 
