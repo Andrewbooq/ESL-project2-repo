@@ -110,7 +110,7 @@ static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        
 static ble_uuid_t m_adv_uuids[] =                                               /**< Universally unique service identifiers. */
 {
     {BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE},
-    // TODO: 7. Add ESTC service UUID to the table
+    {ESTC_SERVICE_UUID_16, BLE_UUID_TYPE_BLE},
 };
 
 ble_estc_service_t m_estc_service; /**< ESTC example BLE service */

@@ -36,22 +36,24 @@
 #include "ble.h"
 #include "sdk_errors.h"
 
-// Random BLE UUID (Version 4 UUID)
+// Service 128-bit UUID (Version 4 UUID)
 #define ESTC_SERVICE_UUID_128 { 0x91, 0x30, 0x4b, 0x4c, 0xf2, 0x2a, /* - */ 0x42, 0x43, /* - */ 0x95, 0xd8, /* - */ 0xf6, 0xc8, /* - */ 0x47, 0x1e, 0x92, 0xb3 }
-#define ESTC_CHAR_1_UUID_128  { 0xb4, 0x62, 0x85, 0xb4, 0x13, 0x9a, /* - */ 0x94, 0xae, /* - */ 0xc0, 0x47, /* - */ 0x06, 0x02, /* - */ 0x65, 0x59, 0x6a, 0xfc }
 
-
-// Random service 16-bit UUID
+// Service 16-bit UUID
 #define ESTC_SERVICE_UUID_16 0xdead
 
-// Characteristic UUID
+// Characteristic 16-bit UUID
 #define ESTC_CHAR_1_UUID_16 0x0001
+#define ESTC_CHAR_2_UUID_16 0x0002
+#define ESTC_CHAR_3_UUID_16 0x0003
 
 typedef struct
 {
     uint16_t service_handle;
     uint16_t connection_handle;
-    ble_gatts_char_handles_t characterstic_handle;
+    ble_gatts_char_handles_t characterstic1_handle;
+    ble_gatts_char_handles_t characterstic2_handle;
+    ble_gatts_char_handles_t characterstic3_handle;
 } ble_estc_service_t;
 
 ret_code_t estc_ble_service_init(ble_estc_service_t *service);
