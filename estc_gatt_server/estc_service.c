@@ -74,9 +74,6 @@ static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service, cons
 {
     ASSERT(NULL != service)
     ret_code_t error_code = NRF_SUCCESS;
-    //ble_uuid128_t char1_uuid = {ESTC_CHAR_1_UUID_128};
-    //ble_uuid128_t char2_uuid = {ESTC_CHAR_2_UUID_128};
-    //ble_uuid128_t char3_uuid = {ESTC_CHAR_3_UUID_128};
     ble_uuid_t characteristic1_uuid;
     ble_uuid_t characteristic2_uuid;
     ble_uuid_t characteristic3_uuid;
