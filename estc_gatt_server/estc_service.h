@@ -51,8 +51,6 @@ typedef struct
 {
     uint16_t service_handle;
     uint16_t connection_handle;
-    
-    // TODO: 6.3. Add handles for characterstic (type: ble_gatts_char_handles_t)
     ble_gatts_char_handles_t characterstic_handle;
 } ble_estc_service_t;
 
