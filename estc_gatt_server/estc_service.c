@@ -44,7 +44,7 @@ static uint8_t          m_char3_value[ESTC_CHAR_LEN] = { 0 };
 
 static uint8_t                  m_char_desc[] = "Mercedes GLK";
 
-static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service);
+static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service, const uint8_t uuid_type);
 
 ret_code_t estc_ble_service_init(ble_estc_service_t *service)
 {
@@ -67,31 +67,26 @@ ret_code_t estc_ble_service_init(ble_estc_service_t *service)
     // NRF_LOG_DEBUG("%s:%d | Service UUID type: 0x%02x", __FUNCTION__, __LINE__, service_uuid.type);
     // NRF_LOG_DEBUG("%s:%d | Service handle: 0x%04x", __FUNCTION__, __LINE__, service->service_handle);
 
-    return estc_ble_add_characteristics(service);
+    return estc_ble_add_characteristics(service, service_uuid.type);
 }
 
-static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service)
+static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service, const uint8_t uuid_type)
 {
     ASSERT(NULL != service)
     ret_code_t error_code = NRF_SUCCESS;
-    ble_uuid128_t char1_uuid = {ESTC_CHAR_1_UUID_128};
-    ble_uuid128_t char2_uuid = {ESTC_CHAR_2_UUID_128};
-    ble_uuid128_t char3_uuid = {ESTC_CHAR_3_UUID_128};
+    //ble_uuid128_t char1_uuid = {ESTC_CHAR_1_UUID_128};
+    //ble_uuid128_t char2_uuid = {ESTC_CHAR_2_UUID_128};
+    //ble_uuid128_t char3_uuid = {ESTC_CHAR_3_UUID_128};
     ble_uuid_t characteristic1_uuid;
     ble_uuid_t characteristic2_uuid;
     ble_uuid_t characteristic3_uuid;
       
     characteristic1_uuid.uuid = ESTC_CHAR_1_UUID_16; /**< 16-bit UUID value or octets 12-13 of 128-bit UUID. */
+    characteristic1_uuid.type = uuid_type;
     characteristic2_uuid.uuid = ESTC_CHAR_2_UUID_16;
+    characteristic2_uuid.type = uuid_type;
     characteristic3_uuid.uuid = ESTC_CHAR_3_UUID_16;
-
-    // Add custom characteristic UUID
-    error_code = sd_ble_uuid_vs_add(&char1_uuid, &characteristic1_uuid.type);
-    APP_ERROR_CHECK(error_code);
-    error_code = sd_ble_uuid_vs_add(&char2_uuid, &characteristic2_uuid.type);
-    APP_ERROR_CHECK(error_code);
-    error_code = sd_ble_uuid_vs_add(&char3_uuid, &characteristic3_uuid.type);
-    APP_ERROR_CHECK(error_code);
+    characteristic3_uuid.type = uuid_type;
 
     // Configure Characteristic metadata (enable read and write)
     ble_gatts_char_md_t char1_md = { 0 };
@@ -175,17 +170,17 @@ static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service)
     error_code = sd_ble_gatts_characteristic_add(service->service_handle,
                                                &char1_md,
                                                &attr_char1_value,
-                                               &(service->characterstic_handle));
+                                               &(service->characterstic1_handle));
 
     error_code = sd_ble_gatts_characteristic_add(service->service_handle,
                                                &char2_md,
                                                &attr_char2_value,
-                                               &(service->characterstic_handle));
+                                               &(service->characterstic2_handle));
 
     error_code = sd_ble_gatts_characteristic_add(service->service_handle,
                                                &char3_md,
                                                &attr_char3_value,
-                                               &(service->characterstic_handle));
+                                               &(service->characterstic3_handle));
 
     APP_ERROR_CHECK(error_code);
     return NRF_SUCCESS;
