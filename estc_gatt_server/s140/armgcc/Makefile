@@ -327,8 +327,8 @@ $(OUTPUT_DIRECTORY)/nrf52840_xxaa.dfu: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.hex
 						 --sd-req 0x0,0x100 \
 						 --sd-id 0x100 \
 						 --application $< \
-						 --softdevice $(SDK_ROOT)/components/softdevice/s140/hex/s140_nrf52_7.2.0_softdevice.hex $@
-
+						 $@
+#--softdevice $(SDK_ROOT)/components/softdevice/s140/hex/s140_nrf52_7.2.0_softdevice.hex $@
 dfu: $(OUTPUT_DIRECTORY)/nrf52840_xxaa.dfu
 	@echo Performing DFU with generated package
 	nrfutil dfu usb-serial -pkg $< -p $(DFU_PORT) -b 115200

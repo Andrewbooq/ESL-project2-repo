@@ -36,21 +36,24 @@
 #include "ble.h"
 #include "sdk_errors.h"
 
-// TODO: 1. Generate random BLE UUID (Version 4 UUID) and define it in the following format:
-// #define ESTC_BASE_UUID { 0xF6, 0xCE, 0x0F, 0xC4, 0xCE, 0x9F, /* - */ 0xC3, 0x99, /* - */ 0xF7, 0x4D, /* - */ 0xDB, 0xB9, /* - */ 0x00, 0x00, 0xEC, 0x39 } // UUID: EC39xxxx-B9DB-4DF7-99C3-9FCEC40FCEF6
+// Random BLE UUID (Version 4 UUID)
+#define ESTC_SERVICE_UUID_128 { 0x91, 0x30, 0x4b, 0x4c, 0xf2, 0x2a, /* - */ 0x42, 0x43, /* - */ 0x95, 0xd8, /* - */ 0xf6, 0xc8, /* - */ 0x47, 0x1e, 0x92, 0xb3 }
+#define ESTC_CHAR_1_UUID_128  { 0xb4, 0x62, 0x85, 0xb4, 0x13, 0x9a, /* - */ 0x94, 0xae, /* - */ 0xc0, 0x47, /* - */ 0x06, 0x02, /* - */ 0x65, 0x59, 0x6a, 0xfc }
 
-// TODO: 2. Pick a random service 16-bit UUID and define it:
-// #define ESTC_SERVICE_UUID 0xabcd
 
-// TODO: 3. Pick a characteristic UUID and define it:
-// #define ESTC_GATT_CHAR_1_UUID 0x0001
+// Random service 16-bit UUID
+#define ESTC_SERVICE_UUID_16 0xdead
+
+// Characteristic UUID
+#define ESTC_CHAR_1_UUID_16 0x0001
 
 typedef struct
 {
     uint16_t service_handle;
     uint16_t connection_handle;
-
+    
     // TODO: 6.3. Add handles for characterstic (type: ble_gatts_char_handles_t)
+    ble_gatts_char_handles_t characterstic_handle;
 } ble_estc_service_t;
 
 ret_code_t estc_ble_service_init(ble_estc_service_t *service);
