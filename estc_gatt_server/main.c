@@ -102,13 +102,15 @@
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 
-#define BLINKY_UPDATE_CHAR1_MS      10000
-#define BLINKY_UPDATE_CHAR2_MS      11000
-#define BLINKY_UPDATE_CHAR3_MS      12000
+#define BLINKY_UPDATE_CHAR1_MS      2000
+#define BLINKY_UPDATE_CHAR2_MS      2500
+#define BLINKY_UPDATE_CHAR3_MS      3000
 
 APP_TIMER_DEF(g_timer_update_char1);
 APP_TIMER_DEF(g_timer_update_char2);
 APP_TIMER_DEF(g_timer_update_char3);
+
+static uint8_t g_ble_value = 0;
 
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< Context for the Queued Write module.*/
@@ -147,15 +149,16 @@ void app_timer_update_char1_handler(void * p_context)
 {
     NRF_LOG_INFO("app_timer_update_char1_handler");
     uint8_t char1_value[ESTC_CHAR_LEN] = { 0 };
-    char1_value[0] = 0x11;
+    char1_value[0] = g_ble_value;
     estc_update_characteristic1_value(&m_estc_service, char1_value, ESTC_CHAR_LEN);
+    g_ble_value++;
 }
 
 void app_timer_update_char2_handler(void * p_context)
 {
     NRF_LOG_INFO("app_timer_update_char2_handler");
     uint8_t char2_value[ESTC_CHAR_LEN] = { 0 };
-    char2_value[0] = 0x12;
+    char2_value[0] = g_ble_value;
     estc_update_characteristic2_value(&m_estc_service, char2_value, ESTC_CHAR_LEN);
 }
 
@@ -163,7 +166,7 @@ void app_timer_update_char3_handler(void * p_context)
 {
     NRF_LOG_INFO("app_timer_update_char3_handler");
     uint8_t char3_value[ESTC_CHAR_LEN] = { 0 };
-    char3_value[0] = 0x13;
+    char3_value[0] = g_ble_value;
     estc_update_characteristic3_value(&m_estc_service, char3_value, ESTC_CHAR_LEN);
 }
 
