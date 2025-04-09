@@ -37,8 +37,7 @@
 #include "ble_gatts.h"
 #include "ble_srv_common.h"
 
-#define ESTC_CHAR_LEN   20                                       /**< Size of the characteristic value being notified (in bytes). */
-static uint8_t          m_char1_value[ESTC_CHAR_LEN] = { 0 };    /**< Value of the characteristic that will be sent as a notification to the central. */
+static uint8_t          m_char1_value[ESTC_CHAR_LEN] = { 0 };
 static uint8_t          m_char2_value[ESTC_CHAR_LEN] = { 0 };
 static uint8_t          m_char3_value[ESTC_CHAR_LEN] = { 0 };
 
@@ -181,4 +180,59 @@ static ret_code_t estc_ble_add_characteristics(ble_estc_service_t *service, cons
 
     APP_ERROR_CHECK(error_code);
     return NRF_SUCCESS;
+}
+
+void estc_update_characteristic1_value(ble_estc_service_t *service, uint8_t* data, uint16_t len)
+{
+    NRF_LOG_INFO("estc_update_characteristic1_value");
+    ASSERT(NULL != service)
+    ASSERT(NULL != data)
+
+    if ((service->connection_handle != BLE_CONN_HANDLE_INVALID) && (len <= ESTC_CHAR_LEN))
+    {
+        ble_gatts_value_t value;
+        value.len = len;
+        value.offset = 0;
+        value.p_value = data;
+        NRF_LOG_INFO("sd_ble_gatts_value_set");
+        sd_ble_gatts_value_set(service->connection_handle, service->characterstic1_handle.value_handle, &value);
+    }
+}
+
+void estc_update_characteristic2_value(ble_estc_service_t *service, uint8_t *data, uint16_t len)
+{
+    NRF_LOG_INFO("estc_update_characteristic2_value");
+    ASSERT(NULL != service)
+    ASSERT(NULL != data)
+    ble_gatts_hvx_params_t hvx_params = { 0 };
+    hvx_params.handle = service->characterstic2_handle.value_handle;
+    hvx_params.type = BLE_GATT_HVX_INDICATION;
+
+    hvx_params.p_len = &len;
+    hvx_params.p_data = data;
+
+    if ((service->connection_handle != BLE_CONN_HANDLE_INVALID) && (len <= ESTC_CHAR_LEN))
+    {
+        NRF_LOG_INFO("sd_ble_gatts_hvx BLE_GATT_HVX_INDICATION");
+        sd_ble_gatts_hvx(service->connection_handle, &hvx_params);
+    }
+}
+
+void estc_update_characteristic3_value(ble_estc_service_t *service, uint8_t *data, uint16_t len)
+{
+    NRF_LOG_INFO("estc_update_characteristic3_value");
+    ASSERT(NULL != service)
+    ASSERT(NULL != data)
+    ble_gatts_hvx_params_t hvx_params = { 0 };
+    hvx_params.handle = service->characterstic3_handle.value_handle;
+    hvx_params.type = BLE_GATT_HVX_NOTIFICATION;
+
+    hvx_params.p_len = &len;
+    hvx_params.p_data = data;
+
+    if ((service->connection_handle != BLE_CONN_HANDLE_INVALID) && (len <= ESTC_CHAR_LEN))
+    {
+        NRF_LOG_INFO("sd_ble_gatts_hvx BLE_GATT_HVX_NOTIFICATION");
+        sd_ble_gatts_hvx(service->connection_handle, &hvx_params);
+    }
 }

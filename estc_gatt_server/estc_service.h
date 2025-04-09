@@ -36,6 +36,8 @@
 #include "ble.h"
 #include "sdk_errors.h"
 
+#define ESTC_CHAR_LEN   20  
+
 // Service 128-bit UUID (Version 4 UUID)
 #define ESTC_SERVICE_UUID_128 { 0x91, 0x30, 0x4b, 0x4c, 0xf2, 0x2a, /* - */ 0x42, 0x43, /* - */ 0x95, 0xd8, /* - */ 0xf6, 0xc8, /* - */ 0x47, 0x1e, 0x92, 0xb3 }
 
@@ -60,6 +62,8 @@ ret_code_t estc_ble_service_init(ble_estc_service_t *service);
 
 void estc_ble_service_on_ble_event(const ble_evt_t *ble_evt, void *ctx);
 
-void estc_update_characteristic_1_value(ble_estc_service_t *service, int32_t *value);
+void estc_update_characteristic1_value(ble_estc_service_t *service, uint8_t* data, uint16_t len);
+void estc_update_characteristic2_value(ble_estc_service_t *service, uint8_t *data, uint16_t len);
+void estc_update_characteristic3_value(ble_estc_service_t *service, uint8_t *data, uint16_t len);
 
 #endif /* ESTC_SERVICE_H__ */

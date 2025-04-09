@@ -101,6 +101,15 @@
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
+
+#define BLINKY_UPDATE_CHAR1_MS      10000
+#define BLINKY_UPDATE_CHAR2_MS      11000
+#define BLINKY_UPDATE_CHAR3_MS      12000
+
+APP_TIMER_DEF(g_timer_update_char1);
+APP_TIMER_DEF(g_timer_update_char2);
+APP_TIMER_DEF(g_timer_update_char3);
+
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
 NRF_BLE_QWR_DEF(m_qwr);                                                         /**< Context for the Queued Write module.*/
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
@@ -134,17 +143,43 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
     app_error_handler(DEAD_BEEF, line_num, p_file_name);
 }
 
-/**@brief Function for the Timer initialization.
- *
- * @details Initializes the timer module. This creates and starts application timers.
- */
+void app_timer_update_char1_handler(void * p_context)
+{
+    NRF_LOG_INFO("app_timer_update_char1_handler");
+    uint8_t char1_value[ESTC_CHAR_LEN] = { 0 };
+    char1_value[0] = 0x11;
+    estc_update_characteristic1_value(&m_estc_service, char1_value, ESTC_CHAR_LEN);
+}
+
+void app_timer_update_char2_handler(void * p_context)
+{
+    NRF_LOG_INFO("app_timer_update_char2_handler");
+    uint8_t char2_value[ESTC_CHAR_LEN] = { 0 };
+    char2_value[0] = 0x12;
+    estc_update_characteristic2_value(&m_estc_service, char2_value, ESTC_CHAR_LEN);
+}
+
+void app_timer_update_char3_handler(void * p_context)
+{
+    NRF_LOG_INFO("app_timer_update_char3_handler");
+    uint8_t char3_value[ESTC_CHAR_LEN] = { 0 };
+    char3_value[0] = 0x13;
+    estc_update_characteristic3_value(&m_estc_service, char3_value, ESTC_CHAR_LEN);
+}
+
 static void timers_init(void)
 {
     // Initialize timer module.
     ret_code_t err_code = app_timer_init();
     APP_ERROR_CHECK(err_code);
-}
 
+    err_code = app_timer_create(&g_timer_update_char1, APP_TIMER_MODE_REPEATED, app_timer_update_char1_handler);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&g_timer_update_char2, APP_TIMER_MODE_REPEATED, app_timer_update_char2_handler);
+    APP_ERROR_CHECK(err_code);
+    err_code = app_timer_create(&g_timer_update_char3, APP_TIMER_MODE_REPEATED, app_timer_update_char3_handler);
+    APP_ERROR_CHECK(err_code);
+}
 
 /**@brief Function for the GAP initialization.
  *
@@ -272,11 +307,18 @@ static void conn_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
 /**@brief Function for starting timers.
  */
 static void application_timers_start(void)
 {
+    ret_code_t err_code = app_timer_start(g_timer_update_char1, APP_TIMER_TICKS(BLINKY_UPDATE_CHAR1_MS), NULL);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = app_timer_start(g_timer_update_char2, APP_TIMER_TICKS(BLINKY_UPDATE_CHAR2_MS), NULL);
+    APP_ERROR_CHECK(err_code);
+
+    err_code = app_timer_start(g_timer_update_char3, APP_TIMER_TICKS(BLINKY_UPDATE_CHAR3_MS), NULL);
+    APP_ERROR_CHECK(err_code);
 }
 
 
